@@ -20,7 +20,6 @@ public enum DismissSource {
 }
 
 public struct Popup<PopupContent: View>: ViewModifier {
-
     init(params: Popup<PopupContent>.PopupParameters,
          view: @escaping () -> PopupContent,
          popupPresented: Bool,
@@ -28,8 +27,8 @@ public struct Popup<PopupContent: View>: ViewModifier {
          showContent: Bool,
          positionIsCalculatedCallback: @escaping () -> (),
          animationCompletedCallback: @escaping () -> (),
-         dismissCallback: @escaping (DismissSource)->()) {
-
+         dismissCallback: @escaping (DismissSource) -> ())
+    {
         self.type = params.type
         self.position = params.position ?? params.type.defaultPosition
         self.appearFrom = params.appearFrom
@@ -55,7 +54,6 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
     public enum PopupType {
-
         case `default`
         case toast
         case floater(verticalPadding: CGFloat = 10, horizontalPadding: CGFloat = 10, useSafeAreaInset: Bool = true)
@@ -153,7 +151,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
         /// Should allow dismiss by dragging - default is `true`
         var dragToDismiss: Bool = true
-        
+
         /// Minimum distance to drag to dismiss
         var dragToDismissDistance: CGFloat?
 
@@ -176,10 +174,10 @@ public struct Popup<PopupContent: View>: ViewModifier {
         var useKeyboardSafeArea: Bool = false
 
         /// called when when dismiss animation starts
-        var willDismissCallback: (DismissSource) -> () = {_ in}
+        var willDismissCallback: (DismissSource) -> () = { _ in }
 
         /// called when when dismiss animation ends
-        var dismissCallback: (DismissSource) -> () = {_ in}
+        var dismissCallback: (DismissSource) -> () = { _ in }
 
         public func type(_ type: PopupType) -> PopupParameters {
             var params = self
@@ -223,7 +221,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
             params.dragToDismiss = dragToDismiss
             return params
         }
-        
+
         /// Minimum distance to drag to dismiss
         public func dragToDismissDistance(_ dragToDismissDistance: CGFloat) -> PopupParameters {
             var params = self
@@ -251,7 +249,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
             return params
         }
 
-        public func backgroundView<BackgroundView: View>(_ backgroundView: ()->(BackgroundView)) -> PopupParameters {
+        public func backgroundView<BackgroundView: View>(_ backgroundView: () -> (BackgroundView)) -> PopupParameters {
             var params = self
             params.backgroundView = AnyView(backgroundView())
             return params
@@ -315,7 +313,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
             switch self {
             case .inactive:
                 return .zero
-            case .dragging(let translation):
+            case let .dragging(translation):
                 return translation
             }
         }
@@ -351,7 +349,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
     /// Minimum distance to drag to dismiss
     var dragToDismissDistance: CGFloat?
-    
+
     /// If opaque - taps do not pass through popup's background color
     var isOpaque: Bool
 
@@ -371,7 +369,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
     var animationCompletedCallback: () -> ()
 
     /// Call dismiss callback with dismiss source
-    var dismissCallback: (DismissSource)->()
+    var dismissCallback: (DismissSource) -> ()
 
     var view: () -> PopupContent
 
@@ -385,7 +383,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
     /// The rect and safe area of popup content
     @State private var sheetContentRect: CGRect = .zero
 
-    @State private var safeAreaInsets: EdgeInsets = EdgeInsets()
+    @State private var safeAreaInsets: EdgeInsets = .init()
 
     /// Variables used to control what is animated and what is not
     @State var actualCurrentOffset = CGPoint.pointFarAwayFromScreen
@@ -393,6 +391,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
 #if os(iOS)
     @State private var isLandscape: Bool = UIDevice.current.orientation.isLandscape
 #endif
+
     // MARK: - Drag to dismiss
 
     /// Drag to dismiss gesture state
@@ -402,6 +401,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
     @State private var lastDragPosition: CGSize = .zero
 
     // MARK: - Drag to dismiss with scroll
+
 #if os(iOS)
     /// UIScrollView delegate, needed for calling didEndDragging
     @StateObject private var scrollViewDelegate = PopupScrollViewDelegate()
@@ -419,17 +419,17 @@ public struct Popup<PopupContent: View>: ViewModifier {
     private var displayedOffsetY: CGFloat {
         if isOpaque {
             if position.isTop {
-                return verticalPadding + (useSafeAreaInset ? 0 :  -safeAreaInsets.top)
+                return verticalPadding + (useSafeAreaInset ? 0 : -safeAreaInsets.top)
             }
             if position.isVerticalCenter {
                 return (screenHeight - sheetContentRect.height)/2 - safeAreaInsets.top
             }
             if position.isBottom {
                 return screenHeight - sheetContentRect.height
-                - (useKeyboardSafeArea ? keyboardHeightHelper.keyboardHeight : 0)
-                - verticalPadding
-                - (useSafeAreaInset ? safeAreaInsets.bottom : 0)
-                - safeAreaInsets.top
+                    - (useKeyboardSafeArea ? keyboardHeightHelper.keyboardHeight : 0)
+                    - verticalPadding
+                    - (useSafeAreaInset ? safeAreaInsets.bottom : 0)
+                    - safeAreaInsets.top
             }
         }
 
@@ -441,11 +441,11 @@ public struct Popup<PopupContent: View>: ViewModifier {
         }
         if position.isBottom {
             return presenterContentRect.height
-            - sheetContentRect.height
-            - (useKeyboardSafeArea ? keyboardHeightHelper.keyboardHeight : 0)
-            - verticalPadding
-            + safeAreaInsets.bottom
-            - (useSafeAreaInset ? safeAreaInsets.bottom : 0)
+                - sheetContentRect.height
+                - (useKeyboardSafeArea ? keyboardHeightHelper.keyboardHeight : 0)
+                - verticalPadding
+                + safeAreaInsets.bottom
+                - (useSafeAreaInset ? safeAreaInsets.bottom : 0)
         }
         return 0
     }
@@ -523,8 +523,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
     private var hiddenScale: CGFloat {
         if popupPresented, calculatedAppearFrom == .centerScale {
             return 0
-        }
-        else if !popupPresented, calculatedDisappearTo == .centerScale {
+        } else if !popupPresented, calculatedDisappearTo == .centerScale {
             return 0
         }
         return 1
@@ -584,7 +583,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
             scrollViewOffset = CGSize(width: 0, height: -value)
         }
 
-        let referenceY = sheetContentRect.height / 3
+        let referenceY = sheetContentRect.height/3
         scrollViewDelegate.scrollEnded = { value in
             if -value >= referenceY {
                 dismissCallback(.drag)
@@ -603,9 +602,9 @@ public struct Popup<PopupContent: View>: ViewModifier {
     var screenSize: CGSize {
 #if os(iOS)
         return UIApplication.shared.connectedScenes
-            .compactMap({ scene -> UIWindow? in
-                (scene as? UIWindowScene)?.keyWindow
-            }).first?.frame.size ?? .zero
+            .compactMap { scene -> UIWindow? in
+                (scene as? UIWindowScene)?.windows.first(where: { $0.isKeyWindow })
+            }.first?.frame.size ?? .zero
 #elseif os(watchOS)
         return WKInterfaceDevice.current().screenBounds.size
 #else
@@ -640,7 +639,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
     private func contentView() -> some View {
 #if os(iOS)
         switch type {
-        case .scroll(let headerView):
+        case let .scroll(headerView):
             VStack(spacing: 0) {
                 headerView
                     .fixedSize(horizontal: false, vertical: true)
@@ -706,7 +705,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
                     }
                 }
 
-                .onChange(of: sheetContentRect.size) { sheetContentRect in
+                .onChange(of: sheetContentRect.size) { _ in
                     positionIsCalculatedCallback()
                 }
 #if os(iOS)
@@ -751,7 +750,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
                     }
                 }
 
-                .onChange(of: sheetContentRect.size) { sheetContentRect in
+                .onChange(of: sheetContentRect.size) { _ in
                     positionIsCalculatedCallback()
                 }
 #if os(iOS)
@@ -763,7 +762,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
         }
     }
 #else
-#error("This project requires Swift 5.9 or newer. Please update your Xcode to compile this project.")
+    #error("This project requires Swift 5.9 or newer. Please update your Xcode to compile this project.")
 #endif
 
     func sheetWithDragGesture() -> some View {
@@ -785,8 +784,8 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
     func changeParamsWithAnimation(_ isDisplayAnimation: Bool) {
-        self.actualCurrentOffset = isDisplayAnimation ? CGPointMake(displayedOffsetX, displayedOffsetY) : hiddenOffset
-        self.actualScale = isDisplayAnimation ? displayedScale : hiddenScale
+        actualCurrentOffset = isDisplayAnimation ? CGPointMake(displayedOffsetX, displayedOffsetY) : hiddenOffset
+        actualScale = isDisplayAnimation ? displayedScale : hiddenScale
     }
 
 #if !os(tvOS)
@@ -819,14 +818,14 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
     private func onDragEnded(drag: DragGesture.Value) {
-        var referenceX = sheetContentRect.width / 3
-        var referenceY = sheetContentRect.height / 3
-        
+        var referenceX = sheetContentRect.width/3
+        var referenceY = sheetContentRect.height/3
+
         if let dragToDismissDistance = dragToDismissDistance {
             referenceX = dragToDismissDistance
             referenceY = dragToDismissDistance
         }
-        
+
         var shouldDismiss = false
         switch calculatedAppearFrom {
         case .topSlide:

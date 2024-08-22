@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct FloatTopLeading: View {
-
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
@@ -44,7 +43,6 @@ struct FloatTopLeading: View {
 }
 
 struct FloatTop: View {
-
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
@@ -72,7 +70,6 @@ struct FloatTop: View {
 }
 
 struct FloatTopTrailing: View {
-
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
@@ -88,7 +85,7 @@ struct FloatTopTrailing: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack {
                         BlackBoldText("@edsheeran", 16)
-                        BlackText ("followed you", 16)
+                        BlackText("followed you", 16)
                             .opacity(0.4)
                             .padding(.trailing, 15)
                         DarkText("8:02 am", 13)
@@ -107,15 +104,16 @@ struct FloatTopTrailing: View {
 }
 
 struct FloatLeading: View {
-
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color("purple"))
-                .overlay(alignment: .topTrailing) {
-                    Picture("cross", 10)
-                        .padding(13)
-                }
+                .overlay(
+                    ZStack(alignment: .topTrailing) {
+                        Picture("cross", 10)
+                            .padding(13)
+                    }
+                )
 
             VStack(alignment: .leading, spacing: 8) {
                 Picture("gift2", 33)
@@ -133,7 +131,6 @@ struct FloatLeading: View {
 }
 
 struct FloatTrailing: View {
-
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
@@ -150,7 +147,6 @@ struct FloatTrailing: View {
 }
 
 struct FloatBottomLeading: View {
-
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "wifi.slash")
@@ -164,7 +160,6 @@ struct FloatBottomLeading: View {
 }
 
 struct FloatBottom: View {
-
     var body: some View {
         ZStack {
             Capsule()
@@ -188,7 +183,6 @@ struct FloatBottom: View {
 }
 
 struct FloatBottomTrailing: View {
-
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
@@ -216,9 +210,9 @@ struct Picture: View {
     }
 
     var body: some View {
-        Image(name)
+        Image(self.name)
             .aspectRatio(1.0, contentMode: .fit)
-            .frame(width: size)
+            .frame(width: self.size)
     }
 }
 
@@ -237,8 +231,8 @@ struct WhiteBoldText: View {
     }
 
     var body: some View {
-        Text(text)
-            .font(.custom(boldFont, size: size))
+        Text(self.text)
+            .font(.custom(boldFont, size: self.size))
             .foregroundColor(.white)
             .bold()
     }
@@ -254,8 +248,8 @@ struct WhiteMediumText: View {
     }
 
     var body: some View {
-        Text(text)
-            .font(.custom(mediumFont, size: size))
+        Text(self.text)
+            .font(.custom(mediumFont, size: self.size))
             .foregroundColor(.white)
     }
 }
@@ -270,8 +264,8 @@ struct WhiteText: View {
     }
 
     var body: some View {
-        Text(text)
-            .font(.custom(regularFont, size: size))
+        Text(self.text)
+            .font(.custom(regularFont, size: self.size))
             .foregroundColor(.white)
     }
 }
@@ -286,8 +280,8 @@ struct BlackBoldText: View {
     }
 
     var body: some View {
-        Text(text)
-            .font(.custom(boldFont, size: size))
+        Text(self.text)
+            .font(.custom(boldFont, size: self.size))
             .foregroundColor(.black)
             .bold()
     }
@@ -303,8 +297,8 @@ struct BlackMediumText: View {
     }
 
     var body: some View {
-        Text(text)
-            .font(.custom(mediumFont, size: size))
+        Text(self.text)
+            .font(.custom(mediumFont, size: self.size))
             .foregroundColor(.white)
     }
 }
@@ -319,8 +313,8 @@ struct BlackText: View {
     }
 
     var body: some View {
-        Text(text)
-            .font(.custom(regularFont, size: size))
+        Text(self.text)
+            .font(.custom(regularFont, size: self.size))
             .foregroundColor(.black)
     }
 }
@@ -335,8 +329,8 @@ struct DarkText: View {
     }
 
     var body: some View {
-        Text(text)
-            .font(.custom(regularFont, size: size))
+        Text(self.text)
+            .font(.custom(regularFont, size: self.size))
             .foregroundColor(Color("darkText"))
     }
 }
